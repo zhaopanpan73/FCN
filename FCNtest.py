@@ -42,7 +42,7 @@ optimizer = tf.train.AdamOptimizer(0.001).minimize(cost)
 sess = tf.Session()
 
 noise_factor = 0.5
-epochs = 10
+epochs = 1
 batch_size = 128
 sess.run(tf.global_variables_initializer())
 
@@ -62,19 +62,20 @@ for e in range(epochs):
               "Training loss: {:.4f}".format(batch_cost))
 
 
-fig, axes = plt.subplots(nrows=2, ncols=10, sharex=True, sharey=True, figsize=(20,4))
-in_imgs = mnist.test.images[10:20]
-noisy_imgs = in_imgs + noise_factor * np.random.randn(*in_imgs.shape)
-noisy_imgs = np.clip(noisy_imgs, 0., 1.)
+    fig, axes = plt.subplots(nrows=2, ncols=10, sharex=True, sharey=True, figsize=(20,4))
+    in_imgs = mnist.test.images[10:20]
+    noisy_imgs = in_imgs + noise_factor * np.random.randn(*in_imgs.shape)  # numpy.random.randn(d0, d1, …, dn)是从标准正态分布中返回一个或多个样本值 形状由参数指定
+    noisy_imgs = np.clip(noisy_imgs, 0., 1.)
 
-reconstructed = sess.run(outputs_,
-                         feed_dict={inputs_: noisy_imgs.reshape((10, 28, 28, 1))})
+    reconstructed = sess.run(outputs_,
+                             feed_dict={inputs_: noisy_imgs.reshape((10, 28, 28, 1))})
 
-for images, row in zip([noisy_imgs, reconstructed], axes):
-    for img, ax in zip(images, row):
-        ax.imshow(img.reshape((28, 28)))
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
+    for images, row in zip([noisy_imgs, reconstructed], axes):
+        for img, ax in zip(images, row):
+            ax.imshow(img.reshape((28, 28)))
+            ax.get_xaxis().set_visible(False)
+            ax.get_yaxis().set_visible(False)
 
-fig.tight_layout(pad=0.1)
-sess.close()
+    fig.tight_layout(pad=0.1)
+    plt.show()
+    sess.close()
